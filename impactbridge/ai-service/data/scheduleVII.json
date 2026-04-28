@@ -1,0 +1,16 @@
+{
+  "activities": [
+    {"clause":"Clause (i)","activity":"Eradicating hunger, poverty and malnutrition","themes":["HUNGER","HEALTH","RURAL_DEVELOPMENT"],"keywords":["hunger","food","nutrition","malnutrition","poverty","meal","kitchen"]},
+    {"clause":"Clause (ii)","activity":"Promoting education and employment enhancing skills","themes":["EDUCATION","LIVELIHOOD"],"keywords":["education","school","skill","training","employment","digital literacy","bridge school","teacher","learning"]},
+    {"clause":"Clause (iii)","activity":"Promoting gender equality and empowering women","themes":["WOMEN_EMPOWERMENT"],"keywords":["women","gender","girl","empowerment","self help group","legal aid","maternal"]},
+    {"clause":"Clause (iv)","activity":"Ensuring environmental sustainability","themes":["ENVIRONMENT"],"keywords":["environment","forest","water","conservation","green","solar","reforestation","plantation","eco"]},
+    {"clause":"Clause (v)","activity":"Protection of national heritage and art","themes":[],"keywords":["heritage","art","culture","craft","tribal art"]},
+    {"clause":"Clause (vi)","activity":"Measures for the benefit of armed forces veterans","themes":[],"keywords":["army","veteran","armed forces","soldier"]},
+    {"clause":"Clause (vii)","activity":"Training to promote rural sports and national sports","themes":[],"keywords":["sports","athlete","rural sports"]},
+    {"clause":"Clause (viii)","activity":"Contribution to PM Relief Fund or other central government funds","themes":[],"keywords":["PM fund","relief fund","disaster relief"]},
+    {"clause":"Clause (ix)","activity":"Contributions to technology incubators in academic institutions","themes":["EDUCATION"],"keywords":["technology","incubator","startup","innovation","IIT","university"]},
+    {"clause":"Clause (x)","activity":"Rural development projects","themes":["RURAL_DEVELOPMENT","LIVELIHOOD"],"keywords":["rural","village","gram","panchayat","infrastructure","road","water tank","solar light"]},
+    {"clause":"Clause (xi)","activity":"Slum area development","themes":["HEALTH","EDUCATION","LIVELIHOOD"],"keywords":["slum","urban poor","dharavi","basti"]},
+    {"clause":"Clause (xii)","activity":"Disaster management and relief","themes":["HEALTH","RURAL_DEVELOPMENT"],"keywords":["disaster","flood","earthquake","relief","rehabilitation"]}
+  ]
+}

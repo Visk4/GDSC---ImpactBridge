@@ -1,0 +1,141 @@
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #000;
+  border-radius: 24px;
+  padding: 16px;
+  --outer-r: 24px;
+  --p-distance: 12px;
+  background: white;
+  box-shadow: 4px 4px 0px #000;
+  margin: 0 auto;
+}
+
+.carousel-track {
+  display: flex;
+}
+
+.carousel-item {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  border: 2px solid #000;
+  border-radius: calc(var(--outer-r) - var(--p-distance));
+  background-color: var(--primary);
+  overflow: hidden;
+  cursor: grab;
+}
+
+.carousel-item:active {
+  cursor: grabbing;
+}
+
+.carousel-container.round {
+  border: 2px solid #000;
+}
+
+.carousel-item.round {
+  background-color: var(--primary);
+  position: relative;
+  bottom: 0.1em;
+  border: 2px solid #000;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.carousel-item-header.round {
+  padding: 0;
+  margin: 0;
+}
+
+.carousel-indicators-container.round {
+  position: absolute;
+  z-index: 2;
+  bottom: 3em;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.carousel-indicator.active {
+  background-color: #000;
+}
+
+.carousel-indicator.inactive {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.carousel-item-header {
+  margin-bottom: 16px;
+  padding: 20px;
+  padding-top: 20px;
+}
+
+.carousel-icon-container {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #000;
+  border: 2px solid #000;
+}
+
+.carousel-icon {
+  height: 20px;
+  width: 20px;
+  color: #fff;
+}
+
+.carousel-item-content {
+  padding: 20px;
+  padding-bottom: 20px;
+}
+
+.carousel-item-title {
+  margin-bottom: 8px;
+  font-weight: 900;
+  font-size: 22px;
+  color: #000;
+}
+
+.carousel-item-description {
+  font-size: 16px;
+  color: #000;
+  font-weight: 600;
+}
+
+.carousel-indicators-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.carousel-indicators {
+  margin-top: 20px;
+  display: flex;
+  width: 150px;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.carousel-indicator {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 150ms;
+  border: 2px solid #000;
+}
+
+.carousel-indicator.active {
+  background-color: #000;
+}
+
+.carousel-indicator.inactive {
+  background-color: #fff;
+}

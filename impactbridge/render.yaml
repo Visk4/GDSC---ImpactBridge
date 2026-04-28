@@ -1,0 +1,49 @@
+databases:
+  - name: impactbridge-db
+    databaseName: impactbridge
+    plan: free
+    ipAllowList: []
+
+services:
+  # ─── Backend API ───
+  - type: web
+    name: impactbridge-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: impactbridge-db
+          property: connectionString
+      - key: DB_USERNAME
+        fromDatabase:
+          name: impactbridge-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: impactbridge-db
+          property: password
+      - key: AI_SERVICE_URL
+        fromService:
+          name: impactbridge-ai
+          type: web
+          property: hostport
+      - key: FRONTEND_URL
+        value: https://impactbridge.vercel.app
+    healthCheckPath: /health
+
+  # ─── AI Service ───
+  - type: web
+    name: impactbridge-ai
+    runtime: docker
+    dockerfilePath: ./ai-service/Dockerfile
+    dockerContext: ./ai-service
+    plan: free
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PORT
+        value: 3001
+    healthCheckPath: /health
