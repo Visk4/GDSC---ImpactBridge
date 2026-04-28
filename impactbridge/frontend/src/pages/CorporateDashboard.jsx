@@ -113,33 +113,42 @@ export default function CorporateDashboard() {
   return (
     <div className="page-container">
       <h2 style={{ fontSize:'1.5rem', fontWeight:800, color:'#1e40af', marginBottom:'1.5rem' }}>Corporate CSR Dashboard</h2>
-      <div className="dashboard-layout">
-        {/* Left Panel */}
-        <div>
-          <div className="card" style={{ marginBottom:'1rem' }}>
-            <h3 style={{ fontWeight:700, marginBottom:'1rem' }}>Select Existing Corporate</h3>
-            {corporates.map(c => (
-              <button key={c.id} onClick={() => handleSelectCorporate(c)}
-                className="btn btn-outline" style={{ width:'100%', marginBottom:'0.5rem', justifyContent:'flex-start', fontSize:'0.85rem',
-                  background: selectedCorp?.id === c.id ? '#eff6ff' : undefined }}>
-                🏢 {c.name} — {fmtINR(c.csrBudget)}
-              </button>
-            ))}
-          </div>
+
+      {/* STEP 1: Register or Select */}
+      {!selectedCorp && (
+        <div style={{ maxWidth: 700, margin: '0 auto' }}>
+          {/* Show existing corporates if any */}
+          {corporates.length > 0 && (
+            <div className="card" style={{ marginBottom:'1.5rem' }}>
+              <h3 style={{ fontWeight:700, marginBottom:'1rem' }}>Your Registered Companies</h3>
+              {corporates.map(c => (
+                <button key={c.id} onClick={() => handleSelectCorporate(c)}
+                  className="btn btn-outline" style={{ width:'100%', marginBottom:'0.5rem', justifyContent:'flex-start', fontSize:'0.85rem' }}>
+                  {c.name} — {fmtINR(c.csrBudget)}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="card">
-            <h3 style={{ fontWeight:700, marginBottom:'1rem' }}>Or Register New</h3>
+            <h3 style={{ fontWeight:700, marginBottom:'1rem' }}>Register Your Company</h3>
+
+            {/* OCR Upload Zone */}
             <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 8, marginBottom: '1rem', border: '1px dashed #cbd5e1' }}>
-              <div style={{ fontWeight: 600, marginBottom: 8, fontSize: '0.9rem', color: '#334155' }}>✨ Auto-fill with CSR Policy (AI)</div>
-              
-              {/* OCR Upload Zone */}
+              <div style={{ fontWeight: 600, marginBottom: 8, fontSize: '0.9rem', color: '#334155' }}>Auto-fill with CSR Policy (AI)</div>
               <div style={{ marginBottom: 10, padding: '12px', border: '2px dashed #93c5fd', borderRadius: 8, textAlign: 'center', background: '#eff6ff', cursor: 'pointer' }}
                 onClick={() => document.getElementById('ocr-file-input').click()}>
-                <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#1e40af' }}>Upload CSR Policy (PDF/Image)</div>
-                <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 4 }}>Google Cloud Vision API extracts text automatically</div>
-                <input type="file" id="ocr-file-input" accept="image/*,.pdf" style={{ display: 'none' }}
+                <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#1e40af' }}>Upload CSR Policy Screenshot / Photo</div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 4 }}>Take a screenshot or photo of your CSR policy document</div>
+                <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: 2 }}>Supported: JPG, PNG, WEBP (Google Cloud Vision OCR)</div>
+                <input type="file" id="ocr-file-input" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }}
                   onChange={async (e) => {
                     const file = e.target.files[0];
                     if (!file) return;
+                    if (!file.type.startsWith('image/')) {
+                      alert('Please upload an image (JPG/PNG). For PDFs, take a screenshot first.');
+                      return;
+                    }
                     const reader = new FileReader();
                     reader.onload = async () => {
                       try {
@@ -147,23 +156,16 @@ export default function CorporateDashboard() {
                         const res = await parseDocumentVision(reader.result);
                         if (res.data.text) {
                           document.getElementById('policy-textarea').value = res.data.text;
-                          alert('Text extracted via Vision API! Click "Parse Policy" to auto-fill the form.');
-                        } else {
-                          alert('No text detected in the document.');
-                        }
-                      } catch { alert('Vision OCR failed.'); }
+                          alert('Text extracted via Vision API! Click "Parse Policy" to auto-fill.');
+                        } else { alert('No text detected in the image. Try a clearer screenshot.'); }
+                      } catch { alert('Vision OCR failed. Please paste text manually instead.'); }
                     };
                     reader.readAsDataURL(file);
                   }} />
               </div>
-              
               <div style={{ textAlign: 'center', fontSize: '0.8rem', color: '#94a3b8', marginBottom: 8 }}>— or paste text directly —</div>
-              <textarea 
-                placeholder="Paste your raw CSR Policy document here..." 
-                rows="3" 
-                style={{ width: '100%', padding: '8px', fontSize: '0.85rem', marginBottom: 8 }}
-                id="policy-textarea"
-              />
+              <textarea placeholder="Paste your raw CSR Policy document here..." rows="3"
+                style={{ width: '100%', padding: '8px', fontSize: '0.85rem', marginBottom: 8 }} id="policy-textarea" />
               <button className="btn btn-outline" style={{ fontSize: '0.8rem', width: '100%' }} onClick={async (e) => {
                 e.preventDefault();
                 const text = document.getElementById('policy-textarea').value;
@@ -171,20 +173,22 @@ export default function CorporateDashboard() {
                 try {
                   const { parseCSRPolicy } = await import('../services/api');
                   const res = await parseCSRPolicy(text);
-                  const aiData = res.data.parsedPolicy || res.data;
+                  const parsed = res.data.parsed || res.data;
                   setForm(prev => ({
                     ...prev,
-                    csrBudget: aiData.budgetEstimate || prev.csrBudget,
-                    focusTheme: aiData.primaryTheme || prev.focusTheme,
-                    preferredState: aiData.targetState || prev.preferredState
+                    name: parsed.companyName || prev.name,
+                    csrBudget: parsed.annualBudgetMax || parsed.annualBudgetMin || prev.csrBudget,
+                    focusTheme: (parsed.focusThemes && parsed.focusThemes[0]) || prev.focusTheme,
+                    preferredState: (parsed.preferredStates && parsed.preferredStates[0]) || prev.preferredState,
                   }));
-                  alert('Form auto-filled based on AI analysis of policy.');
+                  alert('Form auto-filled from AI analysis!');
                 } catch { alert('Failed to parse policy.'); }
-              }}>🤖 Parse Policy & Auto-fill</button>
+              }}>Parse Policy & Auto-fill</button>
             </div>
+
             <form onSubmit={handleCreateCorporate}>
               <div className="form-group"><label>Company Name</label>
-                <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} required placeholder="Company name" /></div>
+                <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} required placeholder="e.g. Tata Consultancy Services" /></div>
               <div className="form-group"><label>Sector</label>
                 <select value={form.sector} onChange={e=>setForm({...form,sector:e.target.value})}>
                   {SECTORS.map(s=><option key={s}>{s}</option>)}</select></div>
@@ -198,22 +202,34 @@ export default function CorporateDashboard() {
                 <select value={form.preferredState} onChange={e=>setForm({...form,preferredState:e.target.value})}>
                   {INDIAN_STATES.map(s=><option key={s}>{s}</option>)}</select></div>
               <button className="btn btn-primary" type="submit" disabled={creating} style={{ width:'100%' }}>
-                {creating ? 'Creating...' : '🔍 Find Matching NGOs'}</button>
+                {creating ? 'Creating...' : 'Register & Find Matching NGOs'}</button>
             </form>
           </div>
         </div>
+      )}
 
-        {/* Right Panel */}
+      {/* STEP 2: Matches view */}
+      {selectedCorp && (
+      <div className="dashboard-layout">
+        <div>
+          <div className="card" style={{ marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ fontWeight: 800, margin: 0 }}>{selectedCorp.name}</h3>
+                <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>{selectedCorp.sector} · Budget: {fmtINR(selectedCorp.csrBudget)}</div>
+              </div>
+              <button className="btn btn-outline" style={{ fontSize: '0.8rem' }} onClick={() => setSelectedCorp(null)}>← Back</button>
+            </div>
+          </div>
+
+          <CorporateVerificationPanel
+            corporateId={selectedCorp.id}
+            onVerified={(result) => console.log('Corporate verified:', result)}
+          />
+        </div>
+
         <div>
           {error && <div style={{ background:'#fee2e2', color:'#dc2626', padding:12, borderRadius:8, marginBottom:'1rem' }}>{error}</div>}
-
-          {selectedCorp && (
-            <CorporateVerificationPanel
-              corporateId={selectedCorp.id}
-              onVerified={(result) => console.log('Corporate verified:', result)}
-            />
-          )}
-
           {selectedCorp && (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
               <div className="filter-bar" style={{ margin: 0, flex: 1 }}>
@@ -376,17 +392,13 @@ export default function CorporateDashboard() {
 
           {!loadingMatches && selectedCorp && filtered.length === 0 && (
             <div className="card" style={{ textAlign:'center', padding:'3rem', color:'#6b7280' }}>
-              No matches found. Try adjusting filters.
-            </div>
-          )}
-
-          {!selectedCorp && !loadingMatches && (
-            <div className="card" style={{ textAlign:'center', padding:'3rem', color:'#6b7280' }}>
-              Select a corporate or register a new one to see NGO matches.
+              No matches found. Try adjusting filters or register more NGOs first.
             </div>
           )}
         </div>
       </div>
+      )}
+
     </div>
   );
 }

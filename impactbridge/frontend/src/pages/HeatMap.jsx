@@ -60,7 +60,7 @@ export default function HeatMap() {
   const [loading, setLoading] = useState(true);
   const mapRef = useRef(null);
 
-  const { isLoaded } = useJsApiLoader({
+  const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY || '',
     libraries: LIBRARIES,
   });
@@ -93,9 +93,13 @@ export default function HeatMap() {
   const isInvalidKey = apiKey.includes('your_') || apiKey === '';
 
   // If Google Maps can't load or key is missing/placeholder, show card fallback
-  if (!isLoaded || isInvalidKey) {
+  if (isInvalidKey || loadError) {
     return <CardFallback districts={districts} loading={loading}
       underserved={underserved} totalNgos={totalNgos} totalGap={totalGap} />;
+  }
+
+  if (!isLoaded) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', fontSize: '1.2rem', color: '#6b7280' }}>Loading Google Maps...</div>;
   }
 
   return (
@@ -122,7 +126,7 @@ export default function HeatMap() {
 
       {/* Google Map */}
       <GoogleMap
-        mapContainerStyle={{ width: '100%', height: '100%' }}
+        mapContainerStyle={{ width: '100%', height: 'calc(100vh - 160px)', minHeight: '500px' }}
         center={INDIA_CENTER}
         zoom={5}
         onLoad={onMapLoad}

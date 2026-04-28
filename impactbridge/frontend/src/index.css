@@ -233,6 +233,10 @@ input:focus, select:focus, textarea:focus {
   padding: 6rem 2rem;
   text-align: center;
   background-color: var(--accent);
+  background-image: url('/hero-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
   border-bottom: var(--border-width) solid var(--border-color);
   position: relative;
   overflow: hidden;
@@ -262,8 +266,8 @@ input:focus, select:focus, textarea:focus {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
   margin-top: -3rem;
   position: relative;
   z-index: 10;
@@ -284,6 +288,7 @@ input:focus, select:focus, textarea:focus {
 
 .stat-card:nth-child(2) { background: #fff; }
 .stat-card:nth-child(3) { background: var(--success); }
+.stat-card:nth-child(4) { background: var(--accent); }
 
 .stat-value {
   font-size: 3.5rem;
@@ -576,7 +581,8 @@ input:focus, select:focus, textarea:focus {
     grid-template-columns: 1fr;
   }
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
   .form-grid {
     grid-template-columns: 1fr;

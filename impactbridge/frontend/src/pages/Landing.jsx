@@ -70,21 +70,29 @@ export default function Landing() {
   return (
     <>
       <section className="hero-section" id="hero-section">
-        <h1 className="hero-title">
-          ₹15,000 Cr in CSR.<br />
-          ₹170B in unmet need.
-        </h1>
-        <p className="hero-subtitle">
-          India's first AI-powered CSR allocation engine. Connecting corporate mandates
-          with grassroots NGOs through intelligent matching and compliance verification.
-        </p>
-        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '4rem' }}>
-          <Link to="/login" className="btn btn-primary btn-lg" style={{ fontSize: '1.3rem' }}>
-            Get Started
-          </Link>
-          <Link to="/heatmap" className="btn btn-secondary btn-lg" style={{ fontSize: '1.3rem' }}>
-            View Impact Map
-          </Link>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3rem', flexWrap: 'wrap', maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ flex: '1 1 400px', minWidth: 300 }}>
+            <h1 className="hero-title" style={{ textAlign: 'left' }}>
+              ₹15,000 Cr in CSR.<br />
+              ₹170B in unmet need.
+            </h1>
+            <p className="hero-subtitle" style={{ textAlign: 'left' }}>
+              India's first AI-powered CSR allocation engine. Connecting corporate mandates
+              with grassroots NGOs through intelligent matching and compliance verification.
+            </p>
+            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2rem' }}>
+              <Link to="/login" className="btn btn-primary btn-lg" style={{ fontSize: '1.3rem' }}>
+                Get Started
+              </Link>
+              <Link to="/heatmap" className="btn btn-secondary btn-lg" style={{ fontSize: '1.3rem' }}>
+                View Impact Map
+              </Link>
+            </div>
+          </div>
+          <div style={{ flex: '1 1 400px', minWidth: 300, display: 'flex', justifyContent: 'center' }}>
+            <img src="/hero.png" alt="ImpactBridge — connecting corporates with grassroots NGOs"
+              style={{ maxWidth: '100%', height: 'auto', maxHeight: 400, borderRadius: 16, filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.15))' }} />
+          </div>
         </div>
       </section>
 
