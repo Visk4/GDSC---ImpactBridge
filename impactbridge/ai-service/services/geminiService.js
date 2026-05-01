@@ -189,7 +189,7 @@ const axios = require('axios');
 
 async function parseDocumentVision(base64Image) {
   try {
-    const GCP_KEY = "AIzaSyClc5-0beupq4qKPla-ZNKqDLDPLj0EV6Y"; // Use the provided key
+    const GCP_KEY = process.env.GOOGLE_API_KEY || "AIzaSyC-IVnO8ZfCAFeR7M-NI9jv53wTr0inOgY";
     // Remove data:image/jpeg;base64, if present
     const base64Data = base64Image.replace(/^data:image\/[a-z]+;base64,/, "");
     
@@ -212,7 +212,7 @@ async function parseDocumentVision(base64Image) {
 
 async function translateText(text) {
   try {
-    const GCP_KEY = "AIzaSyClc5-0beupq4qKPla-ZNKqDLDPLj0EV6Y";
+    const GCP_KEY = process.env.GOOGLE_API_KEY || "AIzaSyC-IVnO8ZfCAFeR7M-NI9jv53wTr0inOgY";
     const response = await axios.post(`https://translation.googleapis.com/language/translate/v2?key=${GCP_KEY}`, {
       q: text,
       target: "en"
@@ -220,7 +220,7 @@ async function translateText(text) {
     
     if (response.data.data && response.data.data.translations) {
       return {
-        detectedLanguage: response.data.data.translations[0].detectedSourceLanguage,
+        detectedLanguage: response.data.data.translations[0].detectedSourceLanguage || "en",
         translatedText: response.data.data.translations[0].translatedText
       };
     }
