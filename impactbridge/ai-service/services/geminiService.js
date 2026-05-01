@@ -212,11 +212,21 @@ async function parseDocumentVision(base64Image) {
 
 async function translateText(text) {
   try {
-    const GCP_KEY = process.env.GOOGLE_API_KEY || "AIzaSyC-IVnO8ZfCAFeR7M-NI9jv53wTr0inOgY";
-    const response = await axios.post(`https://translation.googleapis.com/language/translate/v2?key=${GCP_KEY}`, {
-      q: text,
-      target: "en"
-    });
+    const GCP_KEY = process.env.GOOGLE_API_KEY;
+    if (!GCP_KEY) return { detectedLanguage: "en", translatedText: text };
+
+    const response = await axios.post(
+      `https://translation.googleapis.com/language/translate/v2?key=${GCP_KEY}`,
+      {
+        q: text,
+        target: "en"
+      },
+      {
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      }
+    );
     
     if (response.data.data && response.data.data.translations) {
       return {
@@ -224,10 +234,29 @@ async function translateText(text) {
         translatedText: response.data.data.translations[0].translatedText
       };
     }
-    return { detectedLanguage: "unknown", translatedText: text };
+    return { detectedLanguage: "en", translatedText: text };
   } catch (err) {
-    console.error("Translation API Error:", err.message);
-    return { detectedLanguage: "unknown", translatedText: text };
+      console.error("Translation API Error:", err.message);
+      // Fallback: use Gemini for translation if GCP Translation API fails
+      try {
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const prompt = `Detect language and translate to English if needed. Respond with ONLY valid JSON:
+Text: "${text}"
+{
+  "detectedLanguage": "language code like en, hi, ta, mr, te, bn, gu, etc",
+  "translatedText": "english version of text"
+}`;
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text().replace(/```json|```/g, "").trim();
+        const parsed = JSON.parse(responseText);
+        return {
+          detectedLanguage: parsed.detectedLanguage || "en",
+          translatedText: parsed.translatedText || text
+        };
+      } catch (geminiErr) {
+        console.error("Gemini translation fallback error:", geminiErr.message);
+        return { detectedLanguage: "en", translatedText: text };
+      }
   }
 }
 
