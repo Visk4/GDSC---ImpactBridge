@@ -43,7 +43,9 @@ services:
     plan: free
     envVars:
       - key: GEMINI_API_KEY
-        sync: false
+        value: AIzaSyB1fmgxelOW48WR-5WlkayAAsAnvpS3-_s
+      - key: GOOGLE_API_KEY
+        value: AIzaSyC-IVnO8ZfCAFeR7M-NI9jv53wTr0inOgY
       - key: PORT
         value: 3001
     healthCheckPath: /health
