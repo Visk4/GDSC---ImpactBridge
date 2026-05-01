@@ -10,6 +10,6 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-# Respect PORT env var from cloud providers
+# Respect PORT env var from cloud providers and expand it via shell
 ENV PORT=8080
-CMD ["java", "-Xmx512m", "-jar", "app.jar", "--server.port=${PORT}"]
+CMD ["sh", "-c", "exec java -Xmx512m -jar app.jar --server.port=$PORT"]

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
-const AI_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:3001';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://api-node-impactbridge-backend.onrender.com';
+const AI_URL = import.meta.env.VITE_AI_SERVICE_URL || 'https://api-node-impactbridge.onrender.com';
 
 const backend = axios.create({
   baseURL: BACKEND_URL + '/api',

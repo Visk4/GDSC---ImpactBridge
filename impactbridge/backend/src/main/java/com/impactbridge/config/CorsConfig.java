@@ -24,6 +24,8 @@ public class CorsConfig {
         // This properly supports wildcards AND credentials together
         config.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:*",
+            "https://*.web.app",
+            "https://*.firebaseapp.com",
                 "https://*.vercel.app",
                 "https://*.netlify.app",
                 "https://*.onrender.com",
