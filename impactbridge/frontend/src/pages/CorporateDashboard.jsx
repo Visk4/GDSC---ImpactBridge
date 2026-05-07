@@ -225,6 +225,27 @@ export default function CorporateDashboard() {
         </div>
       )}
 
+      <div className="card" style={{ margin: '0 auto 1.5rem', maxWidth: 1100 }}>
+        <h3 style={{ fontWeight: 800, marginBottom: '0.75rem' }}>Registered NGOs on Platform</h3>
+        {loadingNgos && <div style={{ color: '#6b7280' }}>Loading NGOs...</div>}
+        {!loadingNgos && ngos.length === 0 && (
+          <div style={{ color: '#6b7280' }}>No NGOs registered yet. NGOs appear here after onboarding.</div>
+        )}
+        {!loadingNgos && ngos.slice(0, 6).map(ngo => (
+          <div key={ngo.id} style={{ padding: '0.75rem 0', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <span>{ngo.name}</span>
+              <span className="badge badge-blue" style={{ fontSize: '0.7rem' }}>
+                {ngo.isPublished ? 'Published' : 'Registered'}
+              </span>
+            </div>
+            <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+              {ngo.theme} · {ngo.district}, {ngo.state} · {ngo.annualBeneficiaries} beneficiaries
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* STEP 2: Matches view */}
       {selectedCorp && (
       <div className="dashboard-layout">
@@ -243,27 +264,6 @@ export default function CorporateDashboard() {
             corporateId={selectedCorp.id}
             onVerified={(result) => console.log('Corporate verified:', result)}
           />
-
-          <div className="card" style={{ marginTop: '1rem' }}>
-            <h3 style={{ fontWeight: 800, marginBottom: '0.75rem' }}>Registered NGOs on Platform</h3>
-            {loadingNgos && <div style={{ color: '#6b7280' }}>Loading NGOs...</div>}
-            {!loadingNgos && ngos.length === 0 && (
-              <div style={{ color: '#6b7280' }}>No NGOs registered yet. NGOs appear here after onboarding.</div>
-            )}
-            {!loadingNgos && ngos.slice(0, 6).map(ngo => (
-              <div key={ngo.id} style={{ padding: '0.75rem 0', borderBottom: '1px solid #e5e7eb' }}>
-                <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  <span>{ngo.name}</span>
-                  <span className="badge badge-blue" style={{ fontSize: '0.7rem' }}>
-                    {ngo.isPublished ? 'Published' : 'Registered'}
-                  </span>
-                </div>
-                <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>
-                  {ngo.theme} · {ngo.district}, {ngo.state} · {ngo.annualBeneficiaries} beneficiaries
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div>
