@@ -65,9 +65,7 @@ public class MatchingService {
         Corporate corporate = corporateRepository.findById(corporateId)
                 .orElseThrow(() -> new NoSuchElementException("Corporate not found: " + corporateId));
 
-        List<Ngo> ngos = ngoRepository.findAll().stream()
-                .filter(n -> Boolean.TRUE.equals(n.getIsPublished()))
-                .toList();
+        List<Ngo> ngos = ngoRepository.findAll();
         List<Match> matches = new ArrayList<>();
 
         for (Ngo ngo : ngos) {
