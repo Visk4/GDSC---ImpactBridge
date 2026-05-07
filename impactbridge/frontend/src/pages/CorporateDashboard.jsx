@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllCorporates, submitCorporate, getMatches, expressInterest, markAsFunded, downloadReport } from '../services/api';
+import { getAllCorporates, getAllNgos, submitCorporate, getMatches, expressInterest, markAsFunded, downloadReport } from '../services/api';
 import { CorporateVerificationPanel } from '../components/VerificationPanel';
 
 const INDIAN_STATES = ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Delhi','Jammu and Kashmir'];
@@ -34,7 +34,9 @@ export default function CorporateDashboard() {
   const [corporates, setCorporates] = useState([]);
   const [selectedCorp, setSelectedCorp] = useState(null);
   const [matches, setMatches] = useState([]);
+  const [ngos, setNgos] = useState([]);
   const [loadingMatches, setLoadingMatches] = useState(false);
+  const [loadingNgos, setLoadingNgos] = useState(false);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ name:'', sector:'IT', csrBudget:2500000, focusTheme:'EDUCATION', preferredState:'Maharashtra' });
   const [filterTheme, setFilterTheme] = useState('');
@@ -44,10 +46,25 @@ export default function CorporateDashboard() {
   const [sortBy, setSortBy] = useState('score');
   const [error, setError] = useState('');
 
-  useEffect(() => { loadCorporates(); }, []);
+  useEffect(() => {
+    loadCorporates();
+    loadNgos();
+  }, []);
 
   async function loadCorporates() {
     try { const r = await getAllCorporates(); setCorporates(r.data); } catch {}
+  }
+
+  async function loadNgos() {
+    setLoadingNgos(true);
+    try {
+      const r = await getAllNgos();
+      setNgos(r.data || []);
+    } catch {
+      setNgos([]);
+    } finally {
+      setLoadingNgos(false);
+    }
   }
 
   async function handleSelectCorporate(corp) {
@@ -226,6 +243,27 @@ export default function CorporateDashboard() {
             corporateId={selectedCorp.id}
             onVerified={(result) => console.log('Corporate verified:', result)}
           />
+
+          <div className="card" style={{ marginTop: '1rem' }}>
+            <h3 style={{ fontWeight: 800, marginBottom: '0.75rem' }}>Registered NGOs on Platform</h3>
+            {loadingNgos && <div style={{ color: '#6b7280' }}>Loading NGOs...</div>}
+            {!loadingNgos && ngos.length === 0 && (
+              <div style={{ color: '#6b7280' }}>No NGOs registered yet. NGOs appear here after onboarding.</div>
+            )}
+            {!loadingNgos && ngos.slice(0, 6).map(ngo => (
+              <div key={ngo.id} style={{ padding: '0.75rem 0', borderBottom: '1px solid #e5e7eb' }}>
+                <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span>{ngo.name}</span>
+                  <span className="badge badge-blue" style={{ fontSize: '0.7rem' }}>
+                    {ngo.isPublished ? 'Published' : 'Registered'}
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+                  {ngo.theme} · {ngo.district}, {ngo.state} · {ngo.annualBeneficiaries} beneficiaries
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div>
